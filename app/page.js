@@ -28,6 +28,11 @@ export default function Home() {
             <span>Week 5 Page</span>
         </Link> 
       </div>
+      <div className="font-mono my-5 hover:underline hover:text-blue-500">
+        <Link href="/week-6">
+            <span>Week 6 Page</span>
+        </Link> 
+      </div>
     </main>
   );
 }
