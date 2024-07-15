@@ -3,20 +3,32 @@
 import React, {useState, useEffect} from 'react';
 import ItemList from './item-list';
 import NewItem from './new-item';
-import getItems from '../_services/shopping-list-service';
-import addItem from '../_services/shopping-list-service';
+import { getItems, addItem } from '../_services/shopping-list-service';
 import MealIdeas from './meal-ideas';
+import { useUserAuth } from '../_utils/auth-context';
+
+
 
 function Page() {
-    const[items, setItems] = useState(itemsData);
+    const[items, setItems] = useState([]);
     const[selecteDItemName, setSelectedItemName] = useState('');
+    const { user } = useUserAuth();
     
     const handleAddItem = async (item) => {  
-        const newItem = await addItem(user.uid, item);
-        newItem.id = newItem.id;
-        setItems([...items, newItem]);
-        
-        
+        if (user) {
+            console.log("User: ", user.uid);
+
+            const newItemId = await addItem(user.uid, item);
+            const newItem = {
+                id: newItemId,
+                name: item.name,
+                quantity: item.quantity,
+                category: item.category
+            };
+            setItems([...items, newItem]);
+        } else {
+            console.error("User not logged in");
+        }   
     };
 
     const handleItemSelect = (item) => {
@@ -30,15 +42,17 @@ function Page() {
     }
 
     const loadItems = async () => {
-        const items = await getItems(user.uid);
-        setItems(items);
+        if (user) {
+            const items = await getItems(user.uid);
+            setItems(items);
+            
 
     }
+}
 
     useEffect(() => {
-        if(user) {
-            loadItems();
-        }});
+        loadItems();
+    }, [user]);
     return (
         <main>
             <h1 className="p-4 font-bold text-6xl">Shopping List</h1>

@@ -11,14 +11,22 @@ const getItems = async (userId) => {
             ...doc.data(),
         });
     });
+    console.log("Items: ", items);
     return items;
 
 }
 
 const addItem = async (userId, item) => {
-    const docRef = await addDoc(collection(db, `users/${userId}/items`), item);
-    return docRef.id;
+    try {
+        const docRef = await addDoc(collection(db, `users/${userId}/items`), item);
+        console.log("Document written with ID: ", docRef.id);
+        return docRef.id;
+    
+    } catch (error) {
+        console.error("Error adding document: ", error);
+    }
+    
 }
 
 
-export default getItems; addItem;
+export { getItems, addItem };
